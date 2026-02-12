@@ -14,15 +14,39 @@
     <h1>{{ message }}</h1>
     <h3>{{ count }}</h3>
 
+    <img v-bind:src="image" width="30%" /><br><br>
+
     <form class="search-form" action="/search" method="post">
-      <input type="text" name="query" placeholder="请输入搜索内容">
-      <input type="submit" value="搜索">
+      <label>姓名：
+        <input type="text" v-model="searchForm.name" name="name" placeholder="请输入姓名">
+      </label>
+      <label>年龄：
+        <input type="text" v-model="searchForm.age" name="age" placeholder="请输入年龄">
+      </label>
+      <label>性别：
+        <select v-model="searchForm.gender" name="  gender">
+          <option value="">--请选择--</option>
+          <option value="1">男</option>
+          <option value="0">女</option>
+        </select>
+      </label>
+      <label>职位：
+        <select v-model="searchForm.position" name="position">
+          <option value="">--请选择--</option>
+          <option value="1">经理</option>
+          <option value="2">主管</option>
+          <option value="3">员工</option>
+        </select>
+      </label>
+      <button type="button" v-on:click="search">搜索</button>
+      <button type="button" @click="clear">重置</button>
       <table>
         <thead>
           <tr>
             <th>姓名</th>
             <th>年龄</th>
             <th>性别</th>
+            <th>职位</th>
           </tr>
         </thead>
         <tbody>
@@ -31,6 +55,20 @@
             <td style="text-align: center; border: 1px solid black;">{{ item.name }}</td>
             <td style="text-align: center; border: 1px solid black;">{{ item.age }}</td>
             <td style="text-align: center; border: 1px solid black;">{{ item.gender==1 ? '男' : '女' }}</td>
+            <!-- v-if用法 -->
+            <td style="text-align: center; border: 1px solid black;">
+              <span v-if="item.position==1">经理</span>
+              <span v-else-if="item.position==2">主管</span>
+              <span v-else-if="item.position==3">员工</span>
+              <span v-else>未知</span>
+            </td>
+            <!-- v-show用法 -->
+            <!-- <td style="text-align: center; border: 1px solid black;">
+              <span v-show="item.position==1">经理</span>
+              <span v-show="item.position==2">主管</span>
+              <span v-show="item.position==3">员工</span>
+              <span v-show="item.position!=1 && item.position!=2 && item.position!=3">未知</span>
+            </td> -->
           </tr>
         </tbody>
       </table>
@@ -44,13 +82,41 @@
     createApp({
       data() {
         return {
+          // v-model的数据模型，用于双向绑定表单输入元素的值
+          //封装用户输入的搜索条件
+          searchForm: {
+            name: '',
+            age: '',
+            gender: '',
+            position: ''
+          },
+
           message: "Hello Vue!",
           count: "100",
           items: [
-            { id: 1, name: '张三', age: 20, gender: 1 },
-            { id: 2, name: '李四', age: 25, gender: 0 },
-            { id: 3, name: '王五', age: 30, gender: 1 }
-          ]
+            { id: 1, name: '张三', age: 20, gender: 1, position: 1 },
+            { id: 2, name: '李四', age: 25, gender: 0, position: 2 },
+            { id: 3, name: '王五', age: 30, gender: 1, position: 3 },
+            { id: 4, name: '赵六', age: 28, gender: 0, position: 2 }
+          ],
+          image: "img/wzry.jpg"
+        }
+      },
+      // v-on的方法，用于绑定事件处理函数
+      methods: {
+        // 定义一个方法，用于处理按钮点击事件
+        search() {
+          //将搜索条件输出到控制台
+          console.log(this.searchForm);
+        },
+        clear() {
+          //重置搜索条件
+          this.searchForm = {
+            name: '',
+            age: '',
+            gender: '',
+            position: ''
+          }
         }
       }
     }).mount('#app')
